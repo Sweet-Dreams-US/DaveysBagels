@@ -24,13 +24,12 @@ function Hero() {
     <section className="relative bg-teal overflow-hidden border-b-2 border-ink">
       <div className="grain-overlay absolute inset-0" aria-hidden />
 
-      {/* Floating bagel — sized so it never crowds the headline, no animation
-          while it overlaps text */}
+      {/* Davey's logo badge — transparent bg, sized big so it acts as a
+          decorative anchor in the corner without competing with the headline */}
       <img
-        src={asset('photos/bagel-mark.webp')}
-        alt=""
-        aria-hidden
-        className="hidden md:block absolute top-8 right-[-3rem] lg:right-[-1rem] w-56 lg:w-72 rotate-[12deg] drop-shadow-[6px_6px_0_var(--color-ink)] animate-[float-slow_7s_ease-in-out_infinite] pointer-events-none"
+        src={asset('logo-transparent.webp')}
+        alt="Davey's Delicious Bagels & Coffee"
+        className="hidden md:block absolute top-6 right-4 lg:top-10 lg:right-10 w-72 lg:w-[22rem] xl:w-[26rem] animate-[float-slow_7s_ease-in-out_infinite] pointer-events-none select-none"
       />
 
       {/* Hero text content — bottom padding clears the bagel band */}
