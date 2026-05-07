@@ -65,14 +65,16 @@ function Hero() {
         </div>
       </div>
 
-      {/* Hand-drawn bagel-row spacer — top-anchored so the bagel TOPS are
-          fully visible. No top border so the bagels appear to grow out of
-          the teal hero above (image background matches hero's teal). */}
-      <div className="h-28 sm:h-36 md:h-44 border-b-4 border-ink overflow-hidden bg-teal">
+      {/* Hand-drawn bagel-row spacer — image renders at natural aspect (full
+          bagels visible), no border separating it from the hero (same teal
+          bg). Negative margin-bottom pulls the next sibling (the ticker) up
+          into the spacer, so the ticker overlays the bottom of the bagels —
+          they appear to dip down behind the black band. */}
+      <div className="bg-teal -mb-6 sm:-mb-10 md:-mb-14 lg:-mb-20">
         <img
           src={asset('photos/bagel-spacer.webp')}
           alt="A row of bagel varieties — everything, asiago, jalapeño cheddar, cinnamon raisin, sesame, plain"
-          className="w-full h-full object-cover object-top"
+          className="block w-full"
           loading="eager"
         />
       </div>
