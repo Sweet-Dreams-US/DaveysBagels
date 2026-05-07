@@ -1,0 +1,95 @@
+/* Google Fonts must come BEFORE other @imports per CSS spec */
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Davey's brand palette — pulled from the logo */
+  --color-cream: #fdf6e6;
+  --color-cream-deep: #f7eccd;
+  --color-teal: #4cb9c9;
+  --color-teal-deep: #2f8d9d;
+  --color-mustard: #f0a93b;
+  --color-mustard-deep: #d68424;
+  --color-paprika: #e25b3a;
+  --color-ink: #1a1410;
+  --color-ink-soft: #2a201a;
+
+  /* Type system: chunky display + clean editorial body */
+  --font-display: "Bagel Fat One", "Archivo Black", system-ui, sans-serif;
+  --font-serif: "Fraunces", "Georgia", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Animations */
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-wiggle: wiggle 0.6s ease-in-out;
+  --animate-float-slow: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-3deg); }
+  75%      { transform: rotate(3deg); }
+}
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(2deg); }
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-cream);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-mustard);
+  color: var(--color-ink);
+}
+
+/* Paper-grain noise overlay utility */
+.grain-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hand-stamped, slightly imperfect borders */
+.frame-stamp {
+  border: 3px solid var(--color-ink);
+  box-shadow: 6px 6px 0 0 var(--color-ink);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.frame-stamp:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 0 var(--color-ink);
+}
+
+/* Sticker-style chip */
+.sticker {
+  display: inline-block;
+  padding: .35rem .85rem;
+  border-radius: 999px;
+  border: 2px solid var(--color-ink);
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.78rem;
+}
