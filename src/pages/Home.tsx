@@ -33,7 +33,9 @@ function Hero() {
         className="hidden md:block absolute top-8 right-[-3rem] lg:right-[-1rem] w-56 lg:w-72 rotate-[12deg] drop-shadow-[6px_6px_0_var(--color-ink)] animate-[float-slow_7s_ease-in-out_infinite] pointer-events-none"
       />
 
-      <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-24 sm:pt-24 sm:pb-32">
+      {/* Hero text content — bottom padding is large enough to clear the
+          bagel band at the bottom of the hero on every breakpoint */}
+      <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-[28vw] sm:pt-24 sm:pb-[24vw] md:pb-[22vw] lg:pb-[18vw]">
         <div className="max-w-3xl">
           <span className="sticker bg-mustard text-ink border-ink mb-6">
             ⓘ 1006 Broadway · Fort Wayne, Indiana
@@ -65,15 +67,18 @@ function Hero() {
         </div>
       </div>
 
-      {/* Hand-drawn bagel-row spacer — image renders at natural aspect (full
-          bagels visible), no border separating it from the hero (same teal
-          bg). Negative margin-bottom pulls the next sibling (the ticker) up
-          into the spacer, so the ticker overlays the bottom of the bagels —
-          they appear to dip down behind the black band. */}
-      <div className="bg-teal -mb-6 sm:-mb-10 md:-mb-14 lg:-mb-20">
+      {/* Bagels at the bottom of the hero, clipped to half their natural
+          height so only the TOP HALVES poke up. The ticker bar below the
+          hero visually "covers" the bottom halves — same teal background
+          flows continuously into the bagels (no seam line above). */}
+      <div
+        className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none"
+        style={{ height: 'clamp(72px, 21vw, 240px)' }}
+        aria-hidden
+      >
         <img
           src={asset('photos/bagel-spacer.webp')}
-          alt="A row of bagel varieties — everything, asiago, jalapeño cheddar, cinnamon raisin, sesame, plain"
+          alt=""
           className="block w-full"
           loading="eager"
         />
