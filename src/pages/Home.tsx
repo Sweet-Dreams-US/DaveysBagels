@@ -65,21 +65,22 @@ function Hero() {
         </div>
       </div>
 
-      {/* Bottom photo strip — shorter, focused on the hand-painted Davey's
-          sign which is more on-brand than a wide street view */}
-      <div className="relative h-[26vh] sm:h-[34vh] border-t-4 border-ink overflow-hidden">
+      {/* Bottom photo strip — wide interior shot (3:2 aspect) showing the
+          art-filled space. This photo is naturally landscape so it fits the
+          strip without awkward cropping. */}
+      <div className="relative aspect-[16/7] sm:aspect-[16/6] border-t-4 border-ink overflow-hidden">
         <picture>
-          <source srcSet={asset('photos/sign-1600.webp')} media="(min-width: 800px)" />
+          <source srcSet={asset('photos/inside-2-1600.webp')} media="(min-width: 800px)" />
           <img
-            src={asset('photos/sign-800.webp')}
-            alt="Davey's hand-painted bagel sign on the storefront"
+            src={asset('photos/inside-2-800.webp')}
+            alt="Inside Davey's — bright, art-filled, packed with character"
             className="w-full h-full object-cover object-center"
             loading="eager"
           />
         </picture>
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent" />
-        <div className="absolute bottom-4 left-5 sm:bottom-6 sm:left-8 text-cream font-serif italic text-sm sm:text-base bg-ink/70 backdrop-blur px-4 py-2 border-2 border-cream/30">
-          That&rsquo;s us. Yes, it&rsquo;s open.
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/10 to-transparent" />
+        <div className="absolute bottom-5 left-5 sm:bottom-8 sm:left-8 text-cream font-serif italic text-sm sm:text-base bg-ink/70 backdrop-blur px-4 py-2 border-2 border-cream/30">
+          Step inside. Stay a while.
         </div>
       </div>
     </section>
