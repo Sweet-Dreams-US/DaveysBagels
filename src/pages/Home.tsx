@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <BagelOverlap />
+      <TickerStrip />
       <StorySection />
       <PillarsSection />
       <ArtsDistrictSection />
@@ -13,34 +13,6 @@ export default function Home() {
       <FindUsSection />
       <ClosingCTA />
     </>
-  )
-}
-
-/* ---------------------------------------------------------- */
-/* BAGEL OVERLAP                                              */
-/* ---------------------------------------------------------- */
-/**
- * Wraps the TickerStrip in a relative container with the transparent bagel
- * spacer absolutely positioned at the wrapper's top, translated up by half
- * its own height. Result:
- *   - Top half of bagels visually overlays the bottom of the hero (the
- *     image's transparent background lets the hero's teal show through)
- *   - Bottom half is hidden behind the ticker (and the section below),
- *     achieved with z-index: ticker has z-10, bagel image has auto (= 0)
- */
-function BagelOverlap() {
-  return (
-    <div className="relative">
-      <img
-        src={asset('photos/bagel-spacer.webp')}
-        alt=""
-        aria-hidden
-        className="absolute top-0 left-0 right-0 w-full -translate-y-1/2 pointer-events-none select-none"
-      />
-      <div className="relative z-10">
-        <TickerStrip />
-      </div>
-    </div>
   )
 }
 
@@ -61,10 +33,8 @@ function Hero() {
         className="hidden md:block absolute top-8 right-[-3rem] lg:right-[-1rem] w-56 lg:w-72 rotate-[12deg] drop-shadow-[6px_6px_0_var(--color-ink)] animate-[float-slow_7s_ease-in-out_infinite] pointer-events-none"
       />
 
-      {/* Hero text content — bottom padding clears the area where the
-          BagelOverlap component will visually overlay (top half of bagels
-          extends up into the hero from below). */}
-      <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-[24vw] sm:pt-24 sm:pb-[20vw] md:pb-[18vw] lg:pb-[16vw]">
+      {/* Hero text content — bottom padding clears the bagel band */}
+      <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-32 sm:pt-24 sm:pb-40 md:pb-48 lg:pb-56">
         <div className="max-w-3xl">
           <span className="sticker bg-mustard text-ink border-ink mb-6">
             ⓘ 1006 Broadway · Fort Wayne, Indiana
@@ -94,6 +64,22 @@ function Hero() {
             </a>
           </div>
         </div>
+      </div>
+
+      {/* Bagels INSIDE the hero, transparent PNG over the same teal bg.
+          Centered, max-w-4xl so they're small (not that big), translateY(50%)
+          so only the TOP HALF shows — bottom half is clipped by the hero's
+          overflow-hidden, ending right at the hero's bottom border. */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-full max-w-4xl pointer-events-none select-none"
+        aria-hidden
+      >
+        <img
+          src={asset('photos/bagel-spacer.webp')}
+          alt=""
+          className="block w-full"
+          loading="eager"
+        />
       </div>
     </section>
   )
