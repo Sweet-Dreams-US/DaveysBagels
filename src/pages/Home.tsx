@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import logo from '../assets/logo.png'
 import { asset } from '../utils/asset'
 
 export default function Home() {
@@ -25,13 +24,14 @@ function Hero() {
     <section className="relative bg-teal overflow-hidden border-b-2 border-ink">
       <div className="grain-overlay absolute inset-0" aria-hidden />
 
-      {/* Floating decorative bagels */}
-      <div className="absolute -top-8 -right-8 w-44 h-44 sm:w-60 sm:h-60 opacity-90 animate-[float-slow_7s_ease-in-out_infinite]" aria-hidden>
-        <img src={logo} alt="" className="w-full h-full" />
-      </div>
-      <div className="absolute -bottom-12 -left-12 w-36 h-36 sm:w-52 sm:h-52 opacity-50 rotate-12 animate-[float-slow_9s_ease-in-out_infinite]" aria-hidden>
-        <img src={logo} alt="" className="w-full h-full" />
-      </div>
+      {/* Floating bagel — sized so it never crowds the headline, no animation
+          while it overlaps text */}
+      <img
+        src={asset('photos/bagel-mark.webp')}
+        alt=""
+        aria-hidden
+        className="hidden md:block absolute top-8 right-[-3rem] lg:right-[-1rem] w-56 lg:w-72 rotate-[12deg] drop-shadow-[6px_6px_0_var(--color-ink)] animate-[float-slow_7s_ease-in-out_infinite] pointer-events-none"
+      />
 
       <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-24 sm:pt-24 sm:pb-32">
         <div className="max-w-3xl">
@@ -65,19 +65,20 @@ function Hero() {
         </div>
       </div>
 
-      {/* Bottom photo strip */}
-      <div className="relative h-[44vh] sm:h-[58vh] border-t-4 border-ink overflow-hidden">
+      {/* Bottom photo strip — shorter, focused on the hand-painted Davey's
+          sign which is more on-brand than a wide street view */}
+      <div className="relative h-[26vh] sm:h-[34vh] border-t-4 border-ink overflow-hidden">
         <picture>
-          <source srcSet={asset('photos/storefront-1600.webp')} media="(min-width: 800px)" />
+          <source srcSet={asset('photos/sign-1600.webp')} media="(min-width: 800px)" />
           <img
-            src={asset('photos/storefront-800.webp')}
-            alt="Davey's Delicious Bagels storefront on Broadway in Fort Wayne"
-            className="w-full h-full object-cover"
+            src={asset('photos/sign-800.webp')}
+            alt="Davey's hand-painted bagel sign on the storefront"
+            className="w-full h-full object-cover object-center"
             loading="eager"
           />
         </picture>
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
-        <div className="absolute bottom-5 left-5 sm:bottom-8 sm:left-8 text-cream font-serif italic text-sm sm:text-base bg-ink/65 backdrop-blur px-4 py-2 border-2 border-cream/30">
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent" />
+        <div className="absolute bottom-4 left-5 sm:bottom-6 sm:left-8 text-cream font-serif italic text-sm sm:text-base bg-ink/70 backdrop-blur px-4 py-2 border-2 border-cream/30">
           That&rsquo;s us. Yes, it&rsquo;s open.
         </div>
       </div>
@@ -204,28 +205,42 @@ function PillarsSection() {
       title: 'Steamed daily.',
       copy: 'We steam every bagel to order — soft inside, snappy outside. The technique that built our name.',
       bg: 'bg-mustard',
+      art: asset('photos/bagel-sliced.webp'),
+      artClass: 'top-3 right-3 w-20 sm:w-24 rotate-12',
     },
     {
       label: 'Coffee',
       title: 'Union Blend.',
       copy: 'A small-batch local roast pulled into espresso, lattes, and that 4-shot Black Eye for the long shifts.',
       bg: 'bg-teal',
+      art: asset('photos/coffee-cup.webp'),
+      artClass: 'top-2 right-3 w-16 sm:w-20 -rotate-6',
     },
     {
       label: 'Swag',
       title: 'Be the bagel.',
       copy: 'Trucker hats, mugs, sweatshirts, the full hat trick. Wear Broadway proudly.',
       bg: 'bg-paprika text-cream',
+      art: asset('photos/bagel-mark.webp'),
+      artClass: 'top-2 right-3 w-20 sm:w-24 -rotate-12',
     },
   ]
   return (
     <section className="border-y-2 border-ink bg-cream-deep">
       <div className="max-w-7xl mx-auto grid md:grid-cols-3 divide-y-2 md:divide-y-0 md:divide-x-2 divide-ink">
         {pillars.map((p) => (
-          <article key={p.label} className={`relative p-10 ${p.bg}`}>
-            <div className="text-[11px] uppercase tracking-[0.3em] mb-2 opacity-80">{p.label}</div>
-            <h3 className="font-display text-4xl sm:text-5xl leading-tight">{p.title}</h3>
-            <p className="mt-4 font-serif text-base leading-relaxed max-w-xs">{p.copy}</p>
+          <article key={p.label} className={`relative p-10 overflow-hidden ${p.bg}`}>
+            <img
+              src={p.art}
+              alt=""
+              aria-hidden
+              className={`absolute pointer-events-none drop-shadow-[3px_3px_0_var(--color-ink)] ${p.artClass}`}
+            />
+            <div className="relative">
+              <div className="text-[11px] uppercase tracking-[0.3em] mb-2 opacity-80">{p.label}</div>
+              <h3 className="font-display text-4xl sm:text-5xl leading-tight">{p.title}</h3>
+              <p className="mt-4 font-serif text-base leading-relaxed max-w-xs">{p.copy}</p>
+            </div>
           </article>
         ))}
       </div>
@@ -395,10 +410,10 @@ function ClosingCTA() {
       <div className="grain-overlay absolute inset-0" aria-hidden />
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         <img
-          src={asset('photos/lox-illustration.webp')}
+          src={asset('photos/bagel-sliced.webp')}
           alt=""
           aria-hidden
-          className="absolute -top-10 -right-2 sm:-right-10 w-40 sm:w-56 opacity-90 rotate-6"
+          className="absolute -top-10 -right-2 sm:-right-10 w-40 sm:w-56 opacity-95 rotate-6 drop-shadow-[5px_5px_0_var(--color-ink)]"
         />
         <h2 className="font-display text-6xl sm:text-7xl text-ink leading-[0.9]">
           Hungry yet?
