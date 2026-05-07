@@ -65,23 +65,16 @@ function Hero() {
         </div>
       </div>
 
-      {/* Bottom photo strip — wide interior shot (3:2 aspect) showing the
-          art-filled space. This photo is naturally landscape so it fits the
-          strip without awkward cropping. */}
-      <div className="relative aspect-[16/7] sm:aspect-[16/6] border-t-4 border-ink overflow-hidden">
-        <picture>
-          <source srcSet={asset('photos/inside-2-1600.webp')} media="(min-width: 800px)" />
-          <img
-            src={asset('photos/inside-2-800.webp')}
-            alt="Inside Davey's — bright, art-filled, packed with character"
-            className="w-full h-full object-cover object-center"
-            loading="eager"
-          />
-        </picture>
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/10 to-transparent" />
-        <div className="absolute bottom-5 left-5 sm:bottom-8 sm:left-8 text-cream font-serif italic text-sm sm:text-base bg-ink/70 backdrop-blur px-4 py-2 border-2 border-cream/30">
-          Step inside. Stay a while.
-        </div>
+      {/* Hand-drawn bagel-row spacer — illustrated, on-brand, height-controlled
+          via fixed h-* (object-cover crops the bagels into a clean horizontal
+          band so the spacer stays short on every viewport) */}
+      <div className="h-24 sm:h-32 md:h-36 border-t-4 border-b-4 border-ink overflow-hidden bg-teal">
+        <img
+          src={asset('photos/bagel-spacer.webp')}
+          alt="A row of bagel varieties — everything, asiago, jalapeño cheddar, cinnamon raisin, sesame, plain"
+          className="w-full h-full object-cover object-center"
+          loading="eager"
+        />
       </div>
     </section>
   )
