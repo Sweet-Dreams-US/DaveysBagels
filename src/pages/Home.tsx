@@ -38,7 +38,7 @@ function Hero() {
           <span className="sticker bg-mustard text-ink border-ink mb-6">
             ⓘ 1006 Broadway · Fort Wayne, Indiana
           </span>
-          <h1 className="font-display text-[15vw] sm:text-[9rem] leading-[0.85] text-ink mt-4">
+          <h1 className="font-display text-[clamp(3rem,12vw,9rem)] leading-[0.85] text-ink mt-4">
             Steamed.
             <br />
             <span className="text-cream drop-shadow-[4px_4px_0_var(--color-ink)]">Never</span>

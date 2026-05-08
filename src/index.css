@@ -42,6 +42,10 @@
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+  /* Defensive net: nothing on the page should ever cause horizontal scroll.
+     If a layout bug forces a wider element, it gets clipped here rather than
+     creating a sideways-scroll experience the user has to deal with. */
+  overflow-x: hidden;
 }
 
 body {
@@ -50,6 +54,7 @@ body {
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 /* Selection */

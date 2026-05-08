@@ -56,7 +56,7 @@ export default function Menu() {
         <div className="grain-overlay absolute inset-0" aria-hidden />
         <div className="relative max-w-7xl mx-auto px-6 py-14 sm:py-20 flex flex-col items-start gap-4">
           <span className="sticker bg-mustard text-ink border-ink">Menu & Order — pickup only</span>
-          <h1 className="font-display text-5xl sm:text-7xl text-ink leading-[0.9]">
+          <h1 className="font-display text-[clamp(2.5rem,11vw,5.5rem)] text-ink leading-[0.9]">
             Build your<br />
             <span className="text-cream drop-shadow-[3px_3px_0_var(--color-ink)]">breakfast</span>
           </h1>
@@ -66,10 +66,15 @@ export default function Menu() {
         </div>
       </section>
 
-      {/* Body — two-column on desktop */}
+      {/* Body — two-column on desktop. min-w-0 on the grid items lets their
+          internal overflow-x-auto/object-cover constraints actually take
+          effect; without it, default min-width: auto on grid items makes
+          the tracks grow to fit any unbreakable content (here, the
+          whitespace-nowrap category buttons), which would force the page
+          to scroll horizontally on mobile. */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 grid lg:grid-cols-[220px_1fr] gap-10">
         {/* Side rail / category nav */}
-        <aside className="lg:sticky lg:top-24 lg:self-start space-y-1">
+        <aside className="lg:sticky lg:top-24 lg:self-start space-y-1 min-w-0">
           <div className="mb-3">
             <label htmlFor="menu-search" className="sr-only">Search the menu</label>
             <input
@@ -99,7 +104,7 @@ export default function Menu() {
         </aside>
 
         {/* Sections */}
-        <div className="space-y-16">
+        <div className="space-y-16 min-w-0">
           {itemsByCategory.map((cat) => (
             <section
               key={cat.id}
