@@ -130,6 +130,140 @@ const MILK_CHOICE: ModifierGroup = {
   ],
 }
 
+/** Espresso shots — the upsell hit on most coffee drinks. */
+const EXTRA_SHOTS: ModifierGroup = {
+  id: 'extra-shots',
+  label: 'Extra Espresso',
+  type: 'single',
+  helper: 'Bigger jolt? More art? Add a shot.',
+  options: [
+    { id: 'none', label: 'No extra shots', default: true },
+    { id: 'one', label: '+1 Shot', priceChange: 1.00 },
+    { id: 'two', label: '+2 Shots', priceChange: 1.75 },
+    { id: 'three', label: '+3 Shots', priceChange: 2.50 },
+  ],
+}
+
+/** Flavor syrup — multi-select, $0.75 a pump. */
+const FLAVOR_SYRUP: ModifierGroup = {
+  id: 'syrup',
+  label: 'Flavor Syrup',
+  type: 'multi',
+  helper: 'A pump of personality.',
+  options: [
+    { id: 'vanilla', label: 'Vanilla', priceChange: 0.75 },
+    { id: 'caramel', label: 'Caramel', priceChange: 0.75 },
+    { id: 'hazelnut', label: 'Hazelnut', priceChange: 0.75 },
+    { id: 'mocha', label: 'Mocha', priceChange: 0.75 },
+    { id: 'sf-vanilla', label: 'Sugar-Free Vanilla', priceChange: 0.75 },
+    { id: 'lavender', label: 'Lavender', priceChange: 0.75 },
+    { id: 'cinnamon', label: 'Cinnamon', priceChange: 0.75 },
+  ],
+}
+
+/** Sweetener — multi-select, free. */
+const SWEETENER: ModifierGroup = {
+  id: 'sweetener',
+  label: 'Sweetener',
+  type: 'multi',
+  options: [
+    { id: 'sugar', label: 'Sugar' },
+    { id: 'raw-sugar', label: 'Raw Sugar' },
+    { id: 'honey', label: 'Honey' },
+    { id: 'splenda', label: 'Splenda' },
+    { id: 'stevia', label: 'Stevia' },
+  ],
+}
+
+/** Hot or iced — single-select. */
+const HOT_OR_ICED: ModifierGroup = {
+  id: 'temperature',
+  label: 'Temperature',
+  type: 'single',
+  options: [
+    { id: 'hot', label: 'Hot', default: true },
+    { id: 'iced', label: 'Iced' },
+  ],
+}
+
+/** Tea flavor — for bagged tea + tea latte. Bigelow lineup. */
+const TEA_FLAVOR: ModifierGroup = {
+  id: 'tea-flavor',
+  label: 'Tea',
+  type: 'single',
+  options: [
+    { id: 'english-breakfast', label: 'English Breakfast', default: true },
+    { id: 'earl-grey', label: 'Earl Grey' },
+    { id: 'green', label: 'Green Tea' },
+    { id: 'chamomile', label: 'Chamomile' },
+    { id: 'peppermint', label: 'Peppermint' },
+    { id: 'lemon-ginger', label: 'Lemon Ginger' },
+    { id: 'cinnamon-stick', label: 'Cinnamon Stick' },
+  ],
+}
+
+/** Lemonade flavor. */
+const LEMONADE_FLAVOR: ModifierGroup = {
+  id: 'lemonade-flavor',
+  label: 'Flavor',
+  type: 'single',
+  options: [
+    { id: 'original', label: 'Original Lemon', default: true },
+    { id: 'strawberry', label: 'Strawberry' },
+    { id: 'raspberry', label: 'Raspberry' },
+    { id: 'peach', label: 'Peach' },
+    { id: 'lavender', label: 'Lavender' },
+  ],
+}
+
+/** Apparel size — single-select, XXL gets a $3 surcharge (industry standard). */
+const APPAREL_SIZE: ModifierGroup = {
+  id: 'size',
+  label: 'Size',
+  type: 'single',
+  options: [
+    { id: 's', label: 'S' },
+    { id: 'm', label: 'M', default: true },
+    { id: 'l', label: 'L' },
+    { id: 'xl', label: 'XL' },
+    { id: 'xxl', label: 'XXL', priceChange: 3.00 },
+    { id: 'xxxl', label: 'XXXL', priceChange: 5.00 },
+  ],
+}
+
+/** Hat color — single-select. */
+const HAT_COLOR: ModifierGroup = {
+  id: 'color',
+  label: 'Color',
+  type: 'single',
+  options: [
+    { id: 'black', label: 'Black', default: true },
+    { id: 'navy', label: 'Navy' },
+    { id: 'red', label: 'Paprika Red' },
+    { id: 'cream', label: 'Cream' },
+  ],
+}
+
+/** Standard coffee mod set: milk + shots + syrup + sweetener + temp. */
+const COFFEE_FULL_MODS: ModifierGroup[] = [
+  HOT_OR_ICED,
+  MILK_CHOICE,
+  EXTRA_SHOTS,
+  FLAVOR_SYRUP,
+  SWEETENER,
+]
+
+/** Black coffee (espresso, americano, drip): no milk-priority, but still
+ *  flavorable + sweetenable + hot/iced. Milk is optional (default whole). */
+const COFFEE_BLACK_MODS: ModifierGroup[] = [
+  HOT_OR_ICED,
+  EXTRA_SHOTS,
+  FLAVOR_SYRUP,
+  SWEETENER,
+  // Milk last — it's optional, default whole stays even if customer ignores
+  MILK_CHOICE,
+]
+
 /** Clone a modifier group with a different option marked as the default. */
 function withDefault(group: ModifierGroup, defaultOptionId: string): ModifierGroup {
   return {
@@ -172,8 +306,23 @@ const plainBagelMods = (bagelId: string): ModifierGroup[] => [
   },
 ]
 
-/** Coffee mods — milk choice. */
-const COFFEE_MODS: ModifierGroup[] = [MILK_CHOICE]
+/** Tea mods (bagged tea has flavor + temp + sweetener; tea latte adds milk + syrup). */
+const TEA_BAGGED_MODS: ModifierGroup[] = [TEA_FLAVOR, HOT_OR_ICED, SWEETENER]
+const TEA_LATTE_MODS: ModifierGroup[] = [TEA_FLAVOR, HOT_OR_ICED, MILK_CHOICE, FLAVOR_SYRUP, SWEETENER]
+
+/** Sweet bagel mods — bagel swap + prep. */
+const SWEET_BAGEL_MODS: ModifierGroup[] = [
+  withDefault(BAGEL_CHOICE, 'cinnamon-raisin'),
+  {
+    id: 'prep',
+    label: 'Prep',
+    type: 'single',
+    options: [
+      { id: 'toasted', label: 'Toasted', default: true },
+      { id: 'steamed', label: 'Steamed' },
+    ],
+  },
+]
 
 export type CategoryId =
   | 'breakfast'
@@ -250,10 +399,12 @@ export const MENU: MenuItem[] = [
     flair: 'Three cheeses. One mood. Pure joy.',
     modifiers: sandwichModsWithBagel('plain') },
   { id: 'cream-cheese-8oz', category: 'breakfast', name: '8 oz. Cream Cheese', price: 6.25,
-    description: 'A whole tub of the good stuff.' },
+    description: 'A whole tub of the good stuff.',
+    modifiers: [CREAM_CHEESE] },
   { id: 'bagel-of-the-week', category: 'breakfast', name: 'Bagel of the Week', price: 12.00,
     description: 'A rotating limited release. Ask the counter what’s on today.',
-    flair: 'Blink and you’ll miss it.' },
+    flair: 'Blink and you’ll miss it.',
+    modifiers: SANDWICH_MODS },
 
   // LUNCH & LOX
   { id: 'tincaps-turkey', category: 'lunch-lox', name: 'TinCaps Turkey', price: 10.50,
@@ -280,10 +431,25 @@ export const MENU: MenuItem[] = [
   // SWEET
   { id: 'the-una', category: 'sweet', name: 'The Una', price: 6.50,
     description: 'Toasted cinnamon raisin bagel, creamy peanut butter, banana slices, honey, cinnamon, sugar.',
-    flair: 'Named after a girl. Sweet, warm, unforgettable.' },
+    flair: 'Named after a girl. Sweet, warm, unforgettable.',
+    modifiers: SWEET_BAGEL_MODS },
   { id: 'pb-and-j', category: 'sweet', name: 'PB & J', price: 5.19,
     description: 'Toasted cinnamon raisin bagel, creamy peanut butter, grape jelly.',
-    flair: 'A grown-up’s second-grade lunchbox dream.' },
+    flair: 'A grown-up’s second-grade lunchbox dream.',
+    modifiers: [
+      withDefault(BAGEL_CHOICE, 'cinnamon-raisin'),
+      {
+        id: 'jelly',
+        label: 'Jelly',
+        type: 'single',
+        options: [
+          { id: 'grape', label: 'Grape', default: true },
+          { id: 'strawberry', label: 'Strawberry' },
+          { id: 'raspberry', label: 'Raspberry' },
+          { id: 'apricot', label: 'Apricot' },
+        ],
+      },
+    ] },
 
   // BAGELS + CC
   { id: 'plain-bagel', category: 'bagels', name: 'Plain', price: 2.50, description: 'A blank canvas. We respect it.',
@@ -305,34 +471,42 @@ export const MENU: MenuItem[] = [
     modifiers: plainBagelMods('french-toast') },
 
   // COFFEE
-  { id: 'brewed-coffee', category: 'coffee', name: 'Brewed Coffee — Union Blend', price: 2.50, description: 'Local roaster, slow & honest.' },
-  { id: 'espresso', category: 'coffee', name: 'Espresso', price: 3.00, description: 'A small, mighty cup.' },
+  { id: 'brewed-coffee', category: 'coffee', name: 'Brewed Coffee — Union Blend', price: 2.50, description: 'Local roaster, slow & honest.',
+    modifiers: COFFEE_BLACK_MODS },
+  { id: 'espresso', category: 'coffee', name: 'Espresso', price: 3.00, description: 'A small, mighty cup.',
+    modifiers: [EXTRA_SHOTS, FLAVOR_SYRUP, SWEETENER] },
   { id: 'latte', category: 'coffee', name: 'Latte', price: 5.00, description: 'Espresso, steamed milk, a little foam.',
-    modifiers: COFFEE_MODS },
+    modifiers: COFFEE_FULL_MODS },
   { id: 'cappuccino', category: 'coffee', name: 'Cappuccino', price: 5.00, description: 'Espresso, steamed milk, more foam.',
-    modifiers: COFFEE_MODS },
-  { id: 'americano', category: 'coffee', name: 'Americano', price: 3.50, description: 'Espresso & hot water.' },
+    modifiers: COFFEE_FULL_MODS },
+  { id: 'americano', category: 'coffee', name: 'Americano', price: 3.50, description: 'Espresso & hot water.',
+    modifiers: COFFEE_BLACK_MODS },
   { id: 'au-lait', category: 'coffee', name: 'Au Lait', price: 4.50, description: 'Brewed coffee + steamed milk.',
-    modifiers: COFFEE_MODS },
-  { id: 'red-eye', category: 'coffee', name: 'Red Eye', price: 5.50, description: 'Brewed coffee + 2 espresso shots. The 6 AM cure.' },
-  { id: 'black-eye', category: 'coffee', name: 'Black Eye', price: 6.50, description: 'Union blend with 4 espresso shots. Use responsibly.' },
+    modifiers: COFFEE_FULL_MODS },
+  { id: 'red-eye', category: 'coffee', name: 'Red Eye', price: 5.50, description: 'Brewed coffee + 2 espresso shots. The 6 AM cure.',
+    modifiers: COFFEE_FULL_MODS },
+  { id: 'black-eye', category: 'coffee', name: 'Black Eye', price: 6.50, description: 'Union blend with 4 espresso shots. Use responsibly.',
+    modifiers: COFFEE_FULL_MODS },
   { id: 'chai-latte', category: 'coffee', name: 'Chai Latte', price: 5.00, description: 'Chai + steamed milk.',
-    modifiers: COFFEE_MODS },
+    modifiers: COFFEE_FULL_MODS },
   { id: 'dirty-chai', category: 'coffee', name: 'Dirty Chai', price: 6.50, description: 'Chai with espresso. Best of both.',
-    modifiers: COFFEE_MODS },
+    modifiers: COFFEE_FULL_MODS },
   { id: 'steamer', category: 'coffee', name: 'Steamer', price: 3.50, description: 'Steamed or cold milk + flavor of choice.',
-    modifiers: COFFEE_MODS },
+    modifiers: [HOT_OR_ICED, MILK_CHOICE, FLAVOR_SYRUP, SWEETENER] },
 
   // TEA
-  { id: 'bagged-tea', category: 'tea', name: 'Bagged Tea', price: 2.59, description: 'Hot or iced (Bigelow).' },
-  { id: 'tea-latte', category: 'tea', name: 'Tea Latte', price: 3.63, description: 'Hot or iced. Choose your tea + syrup.' },
+  { id: 'bagged-tea', category: 'tea', name: 'Bagged Tea', price: 2.59, description: 'Hot or iced (Bigelow).',
+    modifiers: TEA_BAGGED_MODS },
+  { id: 'tea-latte', category: 'tea', name: 'Tea Latte', price: 3.63, description: 'Hot or iced. Choose your tea + syrup.',
+    modifiers: TEA_LATTE_MODS },
 
   // SOUPS
   { id: 'seasonal-soup', category: 'soups', name: 'Seasonal Soup', price: 5.00, description: 'Whatever the kitchen is in love with this week.', outOfStock: true },
 
   // DRINKS
   { id: 'soda-pop', category: 'drinks', name: 'Soda Pop', price: 1.50, description: '12 oz. canned, cold.' },
-  { id: 'lemonade', category: 'drinks', name: 'Lemonade', price: 3.00, description: 'Original or your choice of flavor.' },
+  { id: 'lemonade', category: 'drinks', name: 'Lemonade', price: 3.00, description: 'Original or your choice of flavor.',
+    modifiers: [LEMONADE_FLAVOR] },
   { id: 'oj', category: 'drinks', name: 'Orange Juice', price: 3.00 },
   { id: 'water-bottle', category: 'drinks', name: 'Water Bottle', price: 1.50, description: '16 oz.' },
   { id: 'sparkling', category: 'drinks', name: 'Sparkling Mineral Water', price: 2.50, description: 'Perrier.' },
@@ -358,12 +532,27 @@ export const MENU: MenuItem[] = [
   { id: 'dozen', category: 'bulk', name: 'Dozen Bagels', price: 18.00 },
   { id: 'dozen-cc', category: 'bulk', name: 'Dozen + Cream Cheese', price: 35.00, description: 'A breakfast for the whole office.' },
 
-  // SWAG
-  { id: 'trucker-hat', category: 'swag', name: 'Trucker Hat', price: 20.00, description: 'Davey’s logo, snap-back, instantly cooler.' },
-  { id: 'crewneck', category: 'swag', name: 'Crewneck Sweater', price: 45.00 },
-  { id: 'tshirt-hat', category: 'swag', name: 'T-shirt + Hat Combo', price: 40.00 },
-  { id: 'sweatshirt-hat', category: 'swag', name: 'Sweatshirt + Hat Combo', price: 60.00 },
-  { id: 'hat-trick', category: 'swag', name: 'Hat Trick: All Three', price: 85.00, description: 'T-shirt, sweatshirt, hat. Be the bagel.' },
+  // SWAG — apparel needs sizes (otherwise we can't ship it).
+  { id: 'trucker-hat', category: 'swag', name: 'Trucker Hat', price: 20.00, description: 'Davey’s logo, snap-back, instantly cooler.',
+    modifiers: [HAT_COLOR] },
+  { id: 'crewneck', category: 'swag', name: 'Crewneck Sweater', price: 45.00,
+    modifiers: [APPAREL_SIZE] },
+  { id: 'tshirt-hat', category: 'swag', name: 'T-shirt + Hat Combo', price: 40.00,
+    modifiers: [
+      { ...APPAREL_SIZE, id: 'shirt-size', label: 'T-shirt Size' },
+      HAT_COLOR,
+    ] },
+  { id: 'sweatshirt-hat', category: 'swag', name: 'Sweatshirt + Hat Combo', price: 60.00,
+    modifiers: [
+      { ...APPAREL_SIZE, id: 'sweatshirt-size', label: 'Sweatshirt Size' },
+      HAT_COLOR,
+    ] },
+  { id: 'hat-trick', category: 'swag', name: 'Hat Trick: All Three', price: 85.00, description: 'T-shirt, sweatshirt, hat. Be the bagel.',
+    modifiers: [
+      { ...APPAREL_SIZE, id: 'shirt-size', label: 'T-shirt Size' },
+      { ...APPAREL_SIZE, id: 'sweatshirt-size', label: 'Sweatshirt Size' },
+      HAT_COLOR,
+    ] },
   { id: 'mug-20', category: 'swag', name: '20 oz. Mug', price: 17.50 },
   { id: 'mug-12', category: 'swag', name: '12 oz. Mug', price: 15.50 },
 ]
