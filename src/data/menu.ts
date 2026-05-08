@@ -89,13 +89,15 @@ const SANDWICH_ADDONS: ModifierGroup = {
   type: 'multi',
   helper: 'Pile it on — small fee for the good stuff.',
   options: [
-    { id: 'avocado', label: 'Avocado', priceChange: 1.50 },
-    { id: 'extra-cheese', label: 'Extra Cheese', priceChange: 1.00 },
-    { id: 'turkey-bacon', label: 'Turkey Bacon', priceChange: 2.50 },
-    { id: 'beef-bacon', label: 'Wood Farms Beef Bacon', priceChange: 3.00 },
-    { id: 'extra-dds', label: 'Extra Davey’s Sauce', priceChange: 0.50 },
+    { id: 'avocado', label: 'Avocado', priceChange: 2.00 },
+    { id: 'extra-cheese', label: 'Extra Cheese', priceChange: 1.50 },
+    { id: 'turkey-bacon', label: 'Turkey Bacon', priceChange: 3.00 },
+    { id: 'beef-bacon', label: 'Wood Farms Beef Bacon', priceChange: 3.50 },
+    { id: 'extra-dds', label: 'Extra Davey’s Sauce', priceChange: 0.75 },
+    { id: 'tomato', label: 'Tomato', priceChange: 0.50 },
     { id: 'jalapenos-add', label: 'Jalapeños' },
     { id: 'red-onion', label: 'Red Onion' },
+    { id: 'banana-peppers', label: 'Banana Peppers' },
   ],
 }
 
@@ -121,9 +123,10 @@ const MILK_CHOICE: ModifierGroup = {
   options: [
     { id: 'whole', label: 'Whole', default: true },
     { id: 'two-percent', label: '2%' },
-    { id: 'oat', label: 'Oat', priceChange: 0.75 },
-    { id: 'almond', label: 'Almond', priceChange: 0.75 },
-    { id: 'soy', label: 'Soy', priceChange: 0.75 },
+    { id: 'skim', label: 'Skim' },
+    { id: 'oat', label: 'Oat', priceChange: 1.00 },
+    { id: 'almond', label: 'Almond', priceChange: 1.00 },
+    { id: 'soy', label: 'Soy', priceChange: 1.00 },
   ],
 }
 
