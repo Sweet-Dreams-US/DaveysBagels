@@ -310,6 +310,231 @@ const plainBagelMods = (bagelId: string): ModifierGroup[] => [
 const TEA_BAGGED_MODS: ModifierGroup[] = [TEA_FLAVOR, HOT_OR_ICED, SWEETENER]
 const TEA_LATTE_MODS: ModifierGroup[] = [TEA_FLAVOR, HOT_OR_ICED, MILK_CHOICE, FLAVOR_SYRUP, SWEETENER]
 
+/** Bulk bagel mix — applied to 6-packs and dozens. */
+const BULK_MIX: ModifierGroup = {
+  id: 'mix',
+  label: 'Bagel Mix',
+  type: 'single',
+  helper: 'Pre-set mixes are quickest. Need a custom split? Note it at the counter.',
+  options: [
+    { id: 'baker-choice', label: 'Baker’s Choice (mixed)', default: true },
+    { id: 'all-plain', label: 'All Plain' },
+    { id: 'all-everything', label: 'All Everything' },
+    { id: 'all-asiago', label: 'All Asiago', priceChange: 1.50 },
+    { id: 'all-cinnamon', label: 'All Cinnamon Raisin' },
+    { id: 'sweet-pack', label: 'Sweet Pack (cinnamon raisin, blueberry, french toast)' },
+    { id: 'savory-pack', label: 'Savory Pack (everything, asiago, jalapeño cheddar)' },
+    { id: 'classic-pack', label: 'Classic Pack (plain, everything, sesame, blueberry)' },
+  ],
+}
+
+/** Bulk cream cheese flavor mix — multi-select for orders that include cc tubs. */
+const BULK_CREAM_CHEESES: ModifierGroup = {
+  id: 'cc-flavors',
+  label: 'Cream Cheese Flavors',
+  type: 'multi',
+  helper: 'Pick one or more — we’ll split the tubs.',
+  options: [
+    { id: 'plain', label: 'Plain', default: true },
+    { id: 'chive-onion', label: 'Chive & Onion' },
+    { id: 'veggie', label: 'Veggie' },
+  ],
+}
+
+/** Soda brand selection (12 oz cans). */
+const SODA_TYPE: ModifierGroup = {
+  id: 'soda-type',
+  label: 'Choose Your Soda',
+  type: 'single',
+  options: [
+    { id: 'coca-cola', label: 'Coca-Cola', default: true },
+    { id: 'diet-coke', label: 'Diet Coke' },
+    { id: 'coke-zero', label: 'Coke Zero' },
+    { id: 'sprite', label: 'Sprite' },
+    { id: 'dr-pepper', label: 'Dr Pepper' },
+    { id: 'root-beer', label: 'Root Beer' },
+    { id: 'orange', label: 'Orange Crush' },
+    { id: 'ginger-ale', label: 'Ginger Ale' },
+  ],
+}
+
+/** Generic small/large size for juice, simple drinks. */
+const JUICE_SIZE: ModifierGroup = {
+  id: 'size',
+  label: 'Size',
+  type: 'single',
+  options: [
+    { id: 'small', label: 'Small (8 oz)', default: true },
+    { id: 'large', label: 'Large (16 oz)', priceChange: 1.50 },
+  ],
+}
+
+/** Bottled water size. */
+const WATER_SIZE: ModifierGroup = {
+  id: 'size',
+  label: 'Size',
+  type: 'single',
+  options: [
+    { id: '16oz', label: '16 oz', default: true },
+    { id: '1l', label: '1 Liter', priceChange: 0.75 },
+  ],
+}
+
+/** Sparkling/Perrier flavor. */
+const SPARKLING_FLAVOR: ModifierGroup = {
+  id: 'sparkling-flavor',
+  label: 'Flavor',
+  type: 'single',
+  options: [
+    { id: 'plain', label: 'Plain', default: true },
+    { id: 'lime', label: 'Lime' },
+    { id: 'lemon', label: 'Lemon' },
+    { id: 'grapefruit', label: 'Grapefruit' },
+    { id: 'peach', label: 'Peach' },
+  ],
+}
+
+/** Chip flavor (Lay's variety). */
+const CHIPS_FLAVOR: ModifierGroup = {
+  id: 'chips-flavor',
+  label: 'Chip Flavor',
+  type: 'single',
+  helper: 'If we’re out of your pick, we’ll grab the closest match.',
+  options: [
+    { id: 'classic', label: 'Classic', default: true },
+    { id: 'sour-cream-onion', label: 'Sour Cream & Onion' },
+    { id: 'salt-vinegar', label: 'Salt & Vinegar' },
+    { id: 'bbq', label: 'BBQ' },
+    { id: 'cheddar-sour-cream', label: 'Cheddar & Sour Cream' },
+    { id: 'jalapeno', label: 'Jalapeño' },
+  ],
+}
+
+/** Heat-it-up for danishes/brownies/muffins/cookies. */
+const HEAT_IT: ModifierGroup = {
+  id: 'heat',
+  label: 'Serve',
+  type: 'single',
+  options: [
+    { id: 'room-temp', label: 'Room Temp', default: true },
+    { id: 'warm', label: 'Warm me up' },
+  ],
+}
+
+/** Muffin prep — heat + butter add-on. */
+const MUFFIN_PREP: ModifierGroup[] = [
+  HEAT_IT,
+  {
+    id: 'muffin-addons',
+    label: 'Add-ons',
+    type: 'multi',
+    options: [
+      { id: 'butter', label: 'Pat of Butter', priceChange: 0.50 },
+      { id: 'jam', label: 'Side of Jam', priceChange: 0.50 },
+    ],
+  },
+]
+
+/** Fruit parfait toppings. */
+const PARFAIT_MODS: ModifierGroup[] = [
+  {
+    id: 'granola',
+    label: 'Granola',
+    type: 'single',
+    options: [
+      { id: 'house', label: 'House Granola', default: true },
+      { id: 'extra', label: 'Extra Granola', priceChange: 0.75 },
+      { id: 'no-granola', label: 'No Granola' },
+    ],
+  },
+  {
+    id: 'parfait-addons',
+    label: 'Top It',
+    type: 'multi',
+    options: [
+      { id: 'honey', label: 'Drizzle of Honey' },
+      { id: 'extra-fruit', label: 'Extra Fruit', priceChange: 1.00 },
+      { id: 'extra-yogurt', label: 'Extra Yogurt', priceChange: 1.00 },
+      { id: 'chia', label: 'Chia Seeds', priceChange: 0.50 },
+      { id: 'almond-butter', label: 'Almond Butter', priceChange: 1.00 },
+    ],
+  },
+]
+
+/** Hashbrown sauces. */
+const HASHBROWN_MODS: ModifierGroup[] = [
+  {
+    id: 'hashbrown-sauce',
+    label: 'Sauce',
+    type: 'multi',
+    options: [
+      { id: 'ketchup', label: 'Ketchup' },
+      { id: 'hot-sauce', label: 'Hot Sauce' },
+      { id: 'dds', label: 'Davey’s Sauce' },
+      { id: 'sour-cream', label: 'Sour Cream', priceChange: 0.50 },
+    ],
+  },
+  {
+    id: 'hashbrown-seasoning',
+    label: 'Seasoning',
+    type: 'multi',
+    options: [
+      { id: 'salt-pepper', label: 'Salt & Pepper', default: true },
+      { id: 'everything', label: 'Everything Seasoning' },
+      { id: 'jalapeno-bits', label: 'Jalapeño Bits', priceChange: 0.50 },
+    ],
+  },
+]
+
+/** Mug color choice. */
+const MUG_COLOR: ModifierGroup = {
+  id: 'mug-color',
+  label: 'Color',
+  type: 'single',
+  options: [
+    { id: 'black', label: 'Matte Black', default: true },
+    { id: 'cream', label: 'Cream' },
+    { id: 'teal', label: 'Davey’s Teal' },
+    { id: 'paprika', label: 'Paprika Red' },
+  ],
+}
+
+/** Dill spear styling — yes, even the pickle gets options. */
+const DILL_SPEAR_MODS: ModifierGroup = {
+  id: 'spear-prep',
+  label: 'Pickle Prep',
+  type: 'single',
+  options: [
+    { id: 'whole', label: 'Whole Spear', default: true },
+    { id: 'sliced', label: 'Sliced into Chips' },
+    { id: 'extra-brine', label: 'Extra Cold + Extra Brine' },
+  ],
+}
+
+/** Rice crispy upgrade. */
+const RICE_CRISPY_MODS: ModifierGroup = {
+  id: 'crispy-style',
+  label: 'Style',
+  type: 'single',
+  options: [
+    { id: 'classic', label: 'Classic', default: true },
+    { id: 'chocolate', label: 'Chocolate Drizzle', priceChange: 0.75 },
+    { id: 'sprinkles', label: 'Rainbow Sprinkles', priceChange: 0.25 },
+    { id: 'sea-salt', label: 'Brown Butter + Sea Salt', priceChange: 0.75 },
+  ],
+}
+
+/** DDS sauce takeaway sizing — the 8oz vs 16oz upsell. */
+const DDS_SIZE: ModifierGroup = {
+  id: 'dds-size',
+  label: 'Tub Size',
+  type: 'single',
+  options: [
+    { id: '8oz', label: '8 oz', default: true },
+    { id: '16oz', label: '16 oz', priceChange: 5.00 },
+  ],
+}
+
 /** Sweet bagel mods — bagel swap + prep. */
 const SWEET_BAGEL_MODS: ModifierGroup[] = [
   withDefault(BAGEL_CHOICE, 'cinnamon-raisin'),
@@ -460,7 +685,8 @@ export const MENU: MenuItem[] = [
     modifiers: plainBagelMods('asiago') },
   { id: 'jalapeno-cheddar-bagel', category: 'bagels', name: 'Jalapeño Cheddar', price: 2.50, description: 'Spicy. Cheesy. Loud.',
     modifiers: plainBagelMods('jalapeno-cheddar') },
-  { id: 'gf-everything', category: 'bagels', name: 'GF Everything', price: 4.00, description: 'Gluten-free. Same goodness.', outOfStock: true },
+  { id: 'gf-everything', category: 'bagels', name: 'GF Everything', price: 4.00, description: 'Gluten-free. Same goodness.', outOfStock: true,
+    modifiers: plainBagelMods('gf-plain') },
   { id: 'gf-plain', category: 'bagels', name: 'GF Plain', price: 4.00, description: 'Gluten-free. Same goodness.',
     modifiers: plainBagelMods('gf-plain') },
   { id: 'blueberry-bagel', category: 'bagels', name: 'Blueberry', price: 2.00, description: 'Bursts of blue.',
@@ -501,36 +727,88 @@ export const MENU: MenuItem[] = [
     modifiers: TEA_LATTE_MODS },
 
   // SOUPS
-  { id: 'seasonal-soup', category: 'soups', name: 'Seasonal Soup', price: 5.00, description: 'Whatever the kitchen is in love with this week.', outOfStock: true },
+  { id: 'seasonal-soup', category: 'soups', name: 'Seasonal Soup', price: 5.00, description: 'Whatever the kitchen is in love with this week.', outOfStock: true,
+    modifiers: [
+      {
+        id: 'soup-size',
+        label: 'Size',
+        type: 'single',
+        options: [
+          { id: 'cup', label: 'Cup (8 oz)', default: true },
+          { id: 'bowl', label: 'Bowl (12 oz)', priceChange: 2.00 },
+        ],
+      },
+      {
+        id: 'soup-side',
+        label: 'Side',
+        type: 'single',
+        options: [
+          { id: 'plain-bagel-side', label: 'Plain Bagel Side', default: true },
+          { id: 'everything-side', label: 'Everything Bagel Side' },
+          { id: 'no-side', label: 'No Side' },
+        ],
+      },
+    ] },
 
   // DRINKS
-  { id: 'soda-pop', category: 'drinks', name: 'Soda Pop', price: 1.50, description: '12 oz. canned, cold.' },
+  { id: 'soda-pop', category: 'drinks', name: 'Soda Pop', price: 1.50, description: '12 oz. canned, cold.',
+    modifiers: [SODA_TYPE] },
   { id: 'lemonade', category: 'drinks', name: 'Lemonade', price: 3.00, description: 'Original or your choice of flavor.',
-    modifiers: [LEMONADE_FLAVOR] },
-  { id: 'oj', category: 'drinks', name: 'Orange Juice', price: 3.00 },
-  { id: 'water-bottle', category: 'drinks', name: 'Water Bottle', price: 1.50, description: '16 oz.' },
-  { id: 'sparkling', category: 'drinks', name: 'Sparkling Mineral Water', price: 2.50, description: 'Perrier.' },
+    modifiers: [LEMONADE_FLAVOR, JUICE_SIZE] },
+  { id: 'oj', category: 'drinks', name: 'Orange Juice', price: 3.00,
+    modifiers: [JUICE_SIZE] },
+  { id: 'water-bottle', category: 'drinks', name: 'Water Bottle', price: 1.50, description: '16 oz.',
+    modifiers: [WATER_SIZE] },
+  { id: 'sparkling', category: 'drinks', name: 'Sparkling Mineral Water', price: 2.50, description: 'Perrier.',
+    modifiers: [SPARKLING_FLAVOR] },
 
   // SIDES
-  { id: 'chips', category: 'sides', name: 'Chips', price: 1.30, description: 'Lay’s, 1.5 oz.' },
-  { id: 'dill-spear', category: 'sides', name: 'Dill Spear', price: 1.30, description: 'Crisp, cold, brined just right.' },
-  { id: 'rice-crispy', category: 'sides', name: 'Rice Crispy Treat', price: 1.04 },
-  { id: 'fruit-parfait', category: 'sides', name: 'Fruit Parfait', price: 7.25, description: '8 oz., layered & lovely.' },
-  { id: 'cream-cheese-danish', category: 'sides', name: 'Cream Cheese Danish', price: 4.00 },
-  { id: 'apple-danish', category: 'sides', name: 'Apple Danish', price: 4.00 },
-  { id: 'brownie', category: 'sides', name: 'Brownie', price: 4.00 },
-  { id: 'blueberry-muffin', category: 'sides', name: 'Blueberry Cream Muffin', price: 4.00 },
-  { id: 'dds-8oz', category: 'sides', name: 'Davey’s Delicious Sauce — 8 oz.', price: 8.00, description: 'Take the magic home.' },
-  { id: 'dds-refill', category: 'sides', name: 'DDS Refill — 8 oz.', price: 4.00 },
-  { id: 'hashbrowns', category: 'sides', name: 'Hashbrowns', price: 2.00 },
-  { id: 'smores-cookie', category: 'sides', name: 'S’mores Cookie', price: 5.00 },
-  { id: 'snickerdoodle', category: 'sides', name: 'Snickerdoodle Cookie', price: 5.00 },
+  { id: 'chips', category: 'sides', name: 'Chips', price: 1.30, description: 'Lay’s, 1.5 oz.',
+    modifiers: [CHIPS_FLAVOR] },
+  { id: 'dill-spear', category: 'sides', name: 'Dill Spear', price: 1.30, description: 'Crisp, cold, brined just right.',
+    modifiers: [DILL_SPEAR_MODS] },
+  { id: 'rice-crispy', category: 'sides', name: 'Rice Crispy Treat', price: 1.04,
+    modifiers: [RICE_CRISPY_MODS] },
+  { id: 'fruit-parfait', category: 'sides', name: 'Fruit Parfait', price: 7.25, description: '8 oz., layered & lovely.',
+    modifiers: PARFAIT_MODS },
+  { id: 'cream-cheese-danish', category: 'sides', name: 'Cream Cheese Danish', price: 4.00,
+    modifiers: [HEAT_IT] },
+  { id: 'apple-danish', category: 'sides', name: 'Apple Danish', price: 4.00,
+    modifiers: [HEAT_IT] },
+  { id: 'brownie', category: 'sides', name: 'Brownie', price: 4.00,
+    modifiers: [HEAT_IT, {
+      id: 'brownie-addons',
+      label: 'Add-ons',
+      type: 'multi',
+      options: [
+        { id: 'ice-cream', label: 'À la Mode (vanilla ice cream)', priceChange: 2.00 },
+        { id: 'whipped-cream', label: 'Whipped Cream', priceChange: 0.50 },
+        { id: 'caramel', label: 'Caramel Drizzle', priceChange: 0.75 },
+      ],
+    }] },
+  { id: 'blueberry-muffin', category: 'sides', name: 'Blueberry Cream Muffin', price: 4.00,
+    modifiers: MUFFIN_PREP },
+  { id: 'dds-8oz', category: 'sides', name: 'Davey’s Delicious Sauce — 8 oz.', price: 8.00, description: 'Take the magic home.',
+    modifiers: [DDS_SIZE] },
+  { id: 'dds-refill', category: 'sides', name: 'DDS Refill — 8 oz.', price: 4.00,
+    description: 'Bring back your tub for a refill.',
+    modifiers: [DDS_SIZE] },
+  { id: 'hashbrowns', category: 'sides', name: 'Hashbrowns', price: 2.00,
+    modifiers: HASHBROWN_MODS },
+  { id: 'smores-cookie', category: 'sides', name: 'S’mores Cookie', price: 5.00,
+    modifiers: [HEAT_IT] },
+  { id: 'snickerdoodle', category: 'sides', name: 'Snickerdoodle Cookie', price: 5.00,
+    modifiers: [HEAT_IT] },
 
   // BULK
-  { id: 'six-pack', category: 'bulk', name: '6-Pack of Bagels', price: 12.00, description: 'Half a dozen. Mix & match.' },
-  { id: 'six-pack-cc', category: 'bulk', name: '6-Pack + Cream Cheese', price: 18.50 },
-  { id: 'dozen', category: 'bulk', name: 'Dozen Bagels', price: 18.00 },
-  { id: 'dozen-cc', category: 'bulk', name: 'Dozen + Cream Cheese', price: 35.00, description: 'A breakfast for the whole office.' },
+  { id: 'six-pack', category: 'bulk', name: '6-Pack of Bagels', price: 12.00, description: 'Half a dozen. Mix & match.',
+    modifiers: [BULK_MIX] },
+  { id: 'six-pack-cc', category: 'bulk', name: '6-Pack + Cream Cheese', price: 18.50,
+    modifiers: [BULK_MIX, BULK_CREAM_CHEESES] },
+  { id: 'dozen', category: 'bulk', name: 'Dozen Bagels', price: 18.00,
+    modifiers: [BULK_MIX] },
+  { id: 'dozen-cc', category: 'bulk', name: 'Dozen + Cream Cheese', price: 35.00, description: 'A breakfast for the whole office.',
+    modifiers: [BULK_MIX, BULK_CREAM_CHEESES] },
 
   // SWAG — apparel needs sizes (otherwise we can't ship it).
   { id: 'trucker-hat', category: 'swag', name: 'Trucker Hat', price: 20.00, description: 'Davey’s logo, snap-back, instantly cooler.',
@@ -553,6 +831,8 @@ export const MENU: MenuItem[] = [
       { ...APPAREL_SIZE, id: 'sweatshirt-size', label: 'Sweatshirt Size' },
       HAT_COLOR,
     ] },
-  { id: 'mug-20', category: 'swag', name: '20 oz. Mug', price: 17.50 },
-  { id: 'mug-12', category: 'swag', name: '12 oz. Mug', price: 15.50 },
+  { id: 'mug-20', category: 'swag', name: '20 oz. Mug', price: 17.50,
+    modifiers: [MUG_COLOR] },
+  { id: 'mug-12', category: 'swag', name: '12 oz. Mug', price: 15.50,
+    modifiers: [MUG_COLOR] },
 ]
