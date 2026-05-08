@@ -1,3 +1,25 @@
+export type ModifierOption = {
+  id: string
+  label: string
+  /** Added to the base item price when this option is selected. Defaults to 0. */
+  priceChange?: number
+  /** If true, this option is pre-selected when the customizer first opens. */
+  default?: boolean
+}
+
+export type ModifierGroup = {
+  id: string
+  label: string
+  /**
+   * single = exactly one option (radio); multi = any number (checkboxes).
+   * For single groups, the default option is always selected (or the first one).
+   */
+  type: 'single' | 'multi'
+  /** Optional helper sentence printed under the group label. */
+  helper?: string
+  options: ModifierOption[]
+}
+
 export type MenuItem = {
   id: string
   name: string
@@ -8,7 +30,147 @@ export type MenuItem = {
   flair?: string
   /** Mark out-of-stock items so we can render them differently */
   outOfStock?: boolean
+  /** When present, clicking "Add" opens the customizer modal instead of
+   *  adding immediately. Items without modifiers add directly. */
+  modifiers?: ModifierGroup[]
 }
+
+/* ---------------------------------------------------------- */
+/* SHARED MODIFIER PRESETS                                    */
+/* ---------------------------------------------------------- */
+/** Bagel choice: applies to most sandwiches that can be built on any bagel. */
+const BAGEL_CHOICE: ModifierGroup = {
+  id: 'bagel',
+  label: 'Bagel',
+  type: 'single',
+  helper: 'Swap the default bagel for any of our daily-baked options.',
+  options: [
+    { id: 'plain', label: 'Plain', default: true },
+    { id: 'everything', label: 'Everything' },
+    { id: 'asiago', label: 'Asiago', priceChange: 0.50 },
+    { id: 'jalapeno-cheddar', label: 'Jalapeño Cheddar', priceChange: 0.50 },
+    { id: 'cinnamon-raisin', label: 'Cinnamon Raisin' },
+    { id: 'french-toast', label: 'French Toast' },
+    { id: 'gf-plain', label: 'GF Plain', priceChange: 1.50 },
+  ],
+}
+
+/** Cheese: single-select for sandwiches with one cheese. */
+const CHEESE_SINGLE: ModifierGroup = {
+  id: 'cheese',
+  label: 'Cheese',
+  type: 'single',
+  options: [
+    { id: 'american', label: 'American', default: true },
+    { id: 'cheddar', label: 'Cheddar' },
+    { id: 'pepper-jack', label: 'Pepper Jack' },
+    { id: 'provolone', label: 'Provolone' },
+    { id: 'no-cheese', label: 'No Cheese' },
+  ],
+}
+
+/** Cream cheese: single-select for plain bagel orders. */
+const CREAM_CHEESE: ModifierGroup = {
+  id: 'cream-cheese',
+  label: 'Cream Cheese',
+  type: 'single',
+  options: [
+    { id: 'plain-cc', label: 'Plain', default: true },
+    { id: 'chive-onion', label: 'Chive & Onion' },
+    { id: 'veggie', label: 'Veggie' },
+    { id: 'no-cc', label: 'No Cream Cheese' },
+  ],
+}
+
+/** Sandwich add-ons: free or paid extras (multi-select). */
+const SANDWICH_ADDONS: ModifierGroup = {
+  id: 'addons',
+  label: 'Add-ons',
+  type: 'multi',
+  helper: 'Pile it on — small fee for the good stuff.',
+  options: [
+    { id: 'avocado', label: 'Avocado', priceChange: 1.50 },
+    { id: 'extra-cheese', label: 'Extra Cheese', priceChange: 1.00 },
+    { id: 'turkey-bacon', label: 'Turkey Bacon', priceChange: 2.50 },
+    { id: 'beef-bacon', label: 'Wood Farms Beef Bacon', priceChange: 3.00 },
+    { id: 'extra-dds', label: 'Extra Davey’s Sauce', priceChange: 0.50 },
+    { id: 'jalapenos-add', label: 'Jalapeños' },
+    { id: 'red-onion', label: 'Red Onion' },
+  ],
+}
+
+/** Hold these — multi-select, no price change. */
+const HOLD_ITEMS: ModifierGroup = {
+  id: 'hold',
+  label: 'Hold the…',
+  type: 'multi',
+  options: [
+    { id: 'no-egg', label: 'No Egg' },
+    { id: 'no-sauce', label: 'No Davey’s Sauce' },
+    { id: 'no-banana-peppers', label: 'No Banana Peppers' },
+    { id: 'no-jalapenos', label: 'No Jalapeños' },
+    { id: 'no-onion', label: 'No Red Onion' },
+  ],
+}
+
+/** Coffee customization: milk type. */
+const MILK_CHOICE: ModifierGroup = {
+  id: 'milk',
+  label: 'Milk',
+  type: 'single',
+  options: [
+    { id: 'whole', label: 'Whole', default: true },
+    { id: 'two-percent', label: '2%' },
+    { id: 'oat', label: 'Oat', priceChange: 0.75 },
+    { id: 'almond', label: 'Almond', priceChange: 0.75 },
+    { id: 'soy', label: 'Soy', priceChange: 0.75 },
+  ],
+}
+
+/** Clone a modifier group with a different option marked as the default. */
+function withDefault(group: ModifierGroup, defaultOptionId: string): ModifierGroup {
+  return {
+    ...group,
+    options: group.options.map((o) => ({ ...o, default: o.id === defaultOptionId })),
+  }
+}
+
+/** Default modifier set for a typical breakfast sandwich. */
+const SANDWICH_MODS: ModifierGroup[] = [BAGEL_CHOICE, CHEESE_SINGLE, SANDWICH_ADDONS, HOLD_ITEMS]
+
+/** Sandwich mods, but with a specific bagel pre-selected. */
+const sandwichModsWithBagel = (bagelId: string): ModifierGroup[] => [
+  withDefault(BAGEL_CHOICE, bagelId),
+  CHEESE_SINGLE,
+  SANDWICH_ADDONS,
+  HOLD_ITEMS,
+]
+
+/** Lox/lunch sandwich mods (cream cheese instead of cheese). */
+const loxMods = (bagelId: string = 'everything'): ModifierGroup[] => [
+  withDefault(BAGEL_CHOICE, bagelId),
+  CREAM_CHEESE,
+  SANDWICH_ADDONS,
+  HOLD_ITEMS,
+]
+
+/** Plain bagel order (build-your-own). */
+const plainBagelMods = (bagelId: string): ModifierGroup[] => [
+  withDefault(BAGEL_CHOICE, bagelId),
+  CREAM_CHEESE,
+  {
+    id: 'prep',
+    label: 'Prep',
+    type: 'single',
+    options: [
+      { id: 'steamed', label: 'Steamed', default: true },
+      { id: 'toasted', label: 'Toasted' },
+    ],
+  },
+]
+
+/** Coffee mods — milk choice. */
+const COFFEE_MODS: ModifierGroup[] = [MILK_CHOICE]
 
 export type CategoryId =
   | 'breakfast'
@@ -48,32 +210,42 @@ export const MENU: MenuItem[] = [
   // BREAKFAST SANDWICHES
   { id: 'sausage-egg-cheese', category: 'breakfast', name: 'Sausage, Egg & Cheese', price: 9.50,
     description: 'Steamed plain bagel, griddled egg, ¼ lb. Wood Farms sausage patty, American cheese.',
-    flair: 'The original. The reason we get out of bed.' },
+    flair: 'The original. The reason we get out of bed.',
+    modifiers: sandwichModsWithBagel('plain') },
   { id: 'thicc-beef-bacon', category: 'breakfast', name: 'Thicc Cut Beef Bacon, Egg & Cheese', price: 11.50,
     description: 'Steamed plain bagel, griddled egg, 4 oz. of thicc-cut Wood Farms beef bacon, American cheese.',
-    flair: 'Yes, three c’s. Yes, it’s necessary.' },
+    flair: 'Yes, three c’s. Yes, it’s necessary.',
+    modifiers: sandwichModsWithBagel('plain') },
   { id: 'the-07', category: 'breakfast', name: 'The 07 (oh-seven)', price: 10.50,
     description: 'Steamed everything bagel, 3 thick slices of turkey bacon, griddled egg, American cheese, avocado.',
-    flair: 'Numbered, beloved, never duplicated.' },
+    flair: 'Numbered, beloved, never duplicated.',
+    modifiers: sandwichModsWithBagel('everything') },
   { id: 'el-guapo', category: 'breakfast', name: 'El Guapo', price: 11.50,
     description: 'Steamed asiago bagel, turkey bacon, ⅛ lb. pork sausage, griddled egg, American cheese, Davey’s Delicious Sauce.',
-    flair: 'Handsome. Powerful. A little dangerous.' },
+    flair: 'Handsome. Powerful. A little dangerous.',
+    modifiers: sandwichModsWithBagel('asiago') },
   { id: 'the-mad-ant', category: 'breakfast', name: 'The Mad Ant', price: 11.00,
     description: 'Sausage patty, griddled egg, pepper jack, jalapeños, Davey’s Delicious Sauce.',
-    flair: 'For the Coliseum faithful.' },
+    flair: 'For the Coliseum faithful.',
+    modifiers: SANDWICH_MODS },
   { id: 'beef-bacon-bandit', category: 'breakfast', name: 'Beef Bacon Bandit', price: 13.50,
     description: 'Steamed asiago bagel, 3 oz. Wood Farms beef bacon, griddled egg, cheddar, red onion, banana peppers, avocado.',
-    flair: 'Steals the show. Returns it slightly improved.' },
+    flair: 'Steals the show. Returns it slightly improved.',
+    modifiers: sandwichModsWithBagel('asiago') },
   { id: 'turkey-bacon-egg-cheese', category: 'breakfast', name: 'Turkey Bacon, Egg & Cheese', price: 9.00,
-    description: 'Steamed plain bagel, ¼ lb. thicc-cut turkey bacon, griddled egg, American cheese.' },
+    description: 'Steamed plain bagel, ¼ lb. thicc-cut turkey bacon, griddled egg, American cheese.',
+    modifiers: sandwichModsWithBagel('plain') },
   { id: 'pork-bacon-egg-cheese', category: 'breakfast', name: 'Pork Bacon, Egg & Cheese', price: 9.00,
-    description: 'A timeless Tuesday morning.' },
+    description: 'A timeless Tuesday morning.',
+    modifiers: sandwichModsWithBagel('plain') },
   { id: 'sunrise-special', category: 'breakfast', name: 'Sunrise Special', price: 6.25,
     description: 'Steamed everything bagel, griddled egg, American cheese, Davey’s Delicious Sauce.',
-    flair: 'Quietly perfect. The early-shift hero.' },
+    flair: 'Quietly perfect. The early-shift hero.',
+    modifiers: sandwichModsWithBagel('everything') },
   { id: 'sausage-celebration', category: 'breakfast', name: 'Sausage Celebration', price: 10.50,
     description: 'Steamed plain bagel, griddled egg, ¼ lb. Wood Farms breakfast sausage patty, American + provolone + pepper jack, banana peppers.',
-    flair: 'Three cheeses. One mood. Pure joy.' },
+    flair: 'Three cheeses. One mood. Pure joy.',
+    modifiers: sandwichModsWithBagel('plain') },
   { id: 'cream-cheese-8oz', category: 'breakfast', name: '8 oz. Cream Cheese', price: 6.25,
     description: 'A whole tub of the good stuff.' },
   { id: 'bagel-of-the-week', category: 'breakfast', name: 'Bagel of the Week', price: 12.00,
@@ -83,19 +255,24 @@ export const MENU: MenuItem[] = [
   // LUNCH & LOX
   { id: 'tincaps-turkey', category: 'lunch-lox', name: 'TinCaps Turkey', price: 10.50,
     description: 'Steamed everything bagel, veggie cream cheese, ¼ lb. oven-roasted turkey, tomato, banana peppers, S&P.',
-    flair: 'Named for the boys of summer at Parkview Field.' },
+    flair: 'Named for the boys of summer at Parkview Field.',
+    modifiers: loxMods('everything') },
   { id: 'happy-hippy', category: 'lunch-lox', name: 'Happy Hippy', price: 10.50,
     description: 'Hummus, banana peppers, red onion, tomato, jalapeños, avocado, S&P, Davey’s Sauce on an everything bagel.',
-    flair: 'Vegetarian. Maximalist. Vibrant.' },
+    flair: 'Vegetarian. Maximalist. Vibrant.',
+    modifiers: loxMods('everything') },
   { id: 'loxy-lady', category: 'lunch-lox', name: 'Loxy Lady', price: 14.00,
     description: 'Steamed everything bagel, house chive & onion cream cheese, ¼ lb. Atlantic lox, capers, cucumbers, red onion.',
-    flair: 'The whole cinematic universe in one sandwich.' },
+    flair: 'The whole cinematic universe in one sandwich.',
+    modifiers: loxMods('everything') },
   { id: 'lox-on-bagel', category: 'lunch-lox', name: 'Lox on a Bagel', price: 12.00,
     description: 'Steamed everything bagel, plain cream cheese, capers, ¼ lb. lox.',
-    flair: 'For purists. You know who you are.' },
+    flair: 'For purists. You know who you are.',
+    modifiers: loxMods('everything') },
   { id: 'lobster-roll', category: 'lunch-lox', name: 'Lobster Roll', price: 14.00,
     description: 'Toasted everything bagel, butter, lobster, celery, mayo, seasoning.',
-    flair: 'Indiana doesn’t touch the ocean. We bring the ocean here.' },
+    flair: 'Indiana doesn’t touch the ocean. We bring the ocean here.',
+    modifiers: loxMods('everything') },
 
   // SWEET
   { id: 'the-una', category: 'sweet', name: 'The Una', price: 6.50,
@@ -106,28 +283,42 @@ export const MENU: MenuItem[] = [
     flair: 'A grown-up’s second-grade lunchbox dream.' },
 
   // BAGELS + CC
-  { id: 'plain-bagel', category: 'bagels', name: 'Plain', price: 2.50, description: 'A blank canvas. We respect it.' },
-  { id: 'everything-bagel', category: 'bagels', name: 'Everything', price: 2.00, description: 'Garlic, onion, poppy, sesame, salt. The hits.' },
-  { id: 'asiago-bagel', category: 'bagels', name: 'Asiago', price: 2.50, description: 'Crisped cheese crown.' },
-  { id: 'jalapeno-cheddar-bagel', category: 'bagels', name: 'Jalapeño Cheddar', price: 2.50, description: 'Spicy. Cheesy. Loud.' },
+  { id: 'plain-bagel', category: 'bagels', name: 'Plain', price: 2.50, description: 'A blank canvas. We respect it.',
+    modifiers: plainBagelMods('plain') },
+  { id: 'everything-bagel', category: 'bagels', name: 'Everything', price: 2.00, description: 'Garlic, onion, poppy, sesame, salt. The hits.',
+    modifiers: plainBagelMods('everything') },
+  { id: 'asiago-bagel', category: 'bagels', name: 'Asiago', price: 2.50, description: 'Crisped cheese crown.',
+    modifiers: plainBagelMods('asiago') },
+  { id: 'jalapeno-cheddar-bagel', category: 'bagels', name: 'Jalapeño Cheddar', price: 2.50, description: 'Spicy. Cheesy. Loud.',
+    modifiers: plainBagelMods('jalapeno-cheddar') },
   { id: 'gf-everything', category: 'bagels', name: 'GF Everything', price: 4.00, description: 'Gluten-free. Same goodness.', outOfStock: true },
-  { id: 'gf-plain', category: 'bagels', name: 'GF Plain', price: 4.00, description: 'Gluten-free. Same goodness.' },
-  { id: 'blueberry-bagel', category: 'bagels', name: 'Blueberry', price: 2.00, description: 'Bursts of blue.' },
-  { id: 'cinnamon-raisin-bagel', category: 'bagels', name: 'Cinnamon Raisin', price: 2.50, description: 'Sweet, swirly, perfect with butter.' },
-  { id: 'french-toast-bagel', category: 'bagels', name: 'French Toast', price: 2.50, description: 'Tastes like Saturday.' },
+  { id: 'gf-plain', category: 'bagels', name: 'GF Plain', price: 4.00, description: 'Gluten-free. Same goodness.',
+    modifiers: plainBagelMods('gf-plain') },
+  { id: 'blueberry-bagel', category: 'bagels', name: 'Blueberry', price: 2.00, description: 'Bursts of blue.',
+    modifiers: plainBagelMods('plain') },
+  { id: 'cinnamon-raisin-bagel', category: 'bagels', name: 'Cinnamon Raisin', price: 2.50, description: 'Sweet, swirly, perfect with butter.',
+    modifiers: plainBagelMods('cinnamon-raisin') },
+  { id: 'french-toast-bagel', category: 'bagels', name: 'French Toast', price: 2.50, description: 'Tastes like Saturday.',
+    modifiers: plainBagelMods('french-toast') },
 
   // COFFEE
   { id: 'brewed-coffee', category: 'coffee', name: 'Brewed Coffee — Union Blend', price: 2.50, description: 'Local roaster, slow & honest.' },
   { id: 'espresso', category: 'coffee', name: 'Espresso', price: 3.00, description: 'A small, mighty cup.' },
-  { id: 'latte', category: 'coffee', name: 'Latte', price: 5.00, description: 'Espresso, steamed milk, a little foam.' },
-  { id: 'cappuccino', category: 'coffee', name: 'Cappuccino', price: 5.00, description: 'Espresso, steamed milk, more foam.' },
+  { id: 'latte', category: 'coffee', name: 'Latte', price: 5.00, description: 'Espresso, steamed milk, a little foam.',
+    modifiers: COFFEE_MODS },
+  { id: 'cappuccino', category: 'coffee', name: 'Cappuccino', price: 5.00, description: 'Espresso, steamed milk, more foam.',
+    modifiers: COFFEE_MODS },
   { id: 'americano', category: 'coffee', name: 'Americano', price: 3.50, description: 'Espresso & hot water.' },
-  { id: 'au-lait', category: 'coffee', name: 'Au Lait', price: 4.50, description: 'Brewed coffee + steamed milk.' },
+  { id: 'au-lait', category: 'coffee', name: 'Au Lait', price: 4.50, description: 'Brewed coffee + steamed milk.',
+    modifiers: COFFEE_MODS },
   { id: 'red-eye', category: 'coffee', name: 'Red Eye', price: 5.50, description: 'Brewed coffee + 2 espresso shots. The 6 AM cure.' },
   { id: 'black-eye', category: 'coffee', name: 'Black Eye', price: 6.50, description: 'Union blend with 4 espresso shots. Use responsibly.' },
-  { id: 'chai-latte', category: 'coffee', name: 'Chai Latte', price: 5.00, description: 'Chai + steamed milk.' },
-  { id: 'dirty-chai', category: 'coffee', name: 'Dirty Chai', price: 6.50, description: 'Chai with espresso. Best of both.' },
-  { id: 'steamer', category: 'coffee', name: 'Steamer', price: 3.50, description: 'Steamed or cold milk + flavor of choice.' },
+  { id: 'chai-latte', category: 'coffee', name: 'Chai Latte', price: 5.00, description: 'Chai + steamed milk.',
+    modifiers: COFFEE_MODS },
+  { id: 'dirty-chai', category: 'coffee', name: 'Dirty Chai', price: 6.50, description: 'Chai with espresso. Best of both.',
+    modifiers: COFFEE_MODS },
+  { id: 'steamer', category: 'coffee', name: 'Steamer', price: 3.50, description: 'Steamed or cold milk + flavor of choice.',
+    modifiers: COFFEE_MODS },
 
   // TEA
   { id: 'bagged-tea', category: 'tea', name: 'Bagged Tea', price: 2.59, description: 'Hot or iced (Bigelow).' },

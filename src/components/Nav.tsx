@@ -1,9 +1,21 @@
+import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import logo from '../assets/logo.png'
 
 export default function Nav() {
-  const { count, toggle } = useCart()
+  const { count, toggle, pulseTick } = useCart()
+  const [pulsing, setPulsing] = useState(false)
+
+  // Pulse the cart pill briefly every time pulseTick increments (i.e., every
+  // add() call). This is the user's "you added something" feedback now that
+  // the drawer no longer auto-opens.
+  useEffect(() => {
+    if (pulseTick === 0) return  // skip initial mount
+    setPulsing(true)
+    const t = setTimeout(() => setPulsing(false), 700)
+    return () => clearTimeout(t)
+  }, [pulseTick])
 
   return (
     <header className="sticky top-0 z-40 bg-cream/85 backdrop-blur-md border-b-2 border-ink">
@@ -46,12 +58,16 @@ export default function Nav() {
           <button
             onClick={toggle}
             aria-label={`Open cart, ${count} items`}
-            className="relative ml-2 inline-flex items-center gap-2 bg-ink text-cream font-display text-sm uppercase tracking-wider px-4 py-2.5 border-2 border-ink shadow-[3px_3px_0_0_var(--color-mustard)] hover:shadow-[5px_5px_0_0_var(--color-mustard)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all"
+            className={`relative ml-2 inline-flex items-center gap-2 bg-ink text-cream font-display text-sm uppercase tracking-wider px-4 py-2.5 border-2 border-ink shadow-[3px_3px_0_0_var(--color-mustard)] hover:shadow-[5px_5px_0_0_var(--color-mustard)] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all ${
+              pulsing ? 'animate-[wiggle_0.6s_ease-in-out]' : ''
+            }`}
           >
             <CartIcon />
             <span className="hidden sm:inline">Cart</span>
             <span
-              className="ml-1 inline-flex items-center justify-center min-w-[1.4rem] h-[1.4rem] rounded-full bg-paprika text-cream text-xs font-bold px-1.5"
+              className={`ml-1 inline-flex items-center justify-center min-w-[1.4rem] h-[1.4rem] rounded-full bg-paprika text-cream text-xs font-bold px-1.5 transition-transform ${
+                pulsing ? 'scale-125' : 'scale-100'
+              }`}
               aria-hidden="true"
             >
               {count}

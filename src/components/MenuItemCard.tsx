@@ -1,13 +1,29 @@
 import { useState } from 'react'
 import type { MenuItem } from '../data/menu'
-import { useCart } from '../context/CartContext'
+import { useCart, composeCartItemId } from '../context/CartContext'
+import { useCustomizer } from '../context/CustomizerContext'
 
 export default function MenuItemCard({ item }: { item: MenuItem }) {
   const { add } = useCart()
+  const { open } = useCustomizer()
   const [justAdded, setJustAdded] = useState(false)
 
+  const hasMods = !!item.modifiers && item.modifiers.length > 0
+
   function handleAdd() {
-    add({ id: item.id, name: item.name, price: item.price })
+    if (hasMods) {
+      // Open customizer modal — it'll handle the actual add
+      open({ item })
+      return
+    }
+    // Simple item, add directly
+    add({
+      id: composeCartItemId(item.id),
+      baseId: item.id,
+      name: item.name,
+      price: item.price,
+      qty: 1,
+    })
     setJustAdded(true)
     setTimeout(() => setJustAdded(false), 1200)
   }
@@ -28,12 +44,10 @@ export default function MenuItemCard({ item }: { item: MenuItem }) {
         </div>
       </header>
 
-      {/* Description */}
       {item.description && (
         <p className="text-sm text-ink-soft leading-relaxed">{item.description}</p>
       )}
 
-      {/* Flair */}
       {item.flair && (
         <p className="mt-2 text-xs italic text-teal-deep border-l-2 border-mustard pl-2">
           {item.flair}
@@ -46,19 +60,23 @@ export default function MenuItemCard({ item }: { item: MenuItem }) {
         </div>
       )}
 
-      {/* Add button */}
       {!disabled && (
-        <div className="mt-4 pt-3 border-t border-dashed border-ink/30 flex items-center justify-end">
+        <div className="mt-4 pt-3 border-t border-dashed border-ink/30 flex items-center justify-between">
+          {hasMods && (
+            <span className="text-[10px] uppercase tracking-widest text-ink-soft font-semibold">
+              Customize →
+            </span>
+          )}
           <button
             onClick={handleAdd}
-            aria-label={`Add ${item.name} to cart`}
-            className={`inline-flex items-center gap-2 font-display text-sm uppercase tracking-widest px-3 py-2 border-2 border-ink transition-all ${
+            aria-label={hasMods ? `Customize ${item.name}` : `Add ${item.name} to cart`}
+            className={`ml-auto inline-flex items-center gap-2 font-display text-sm uppercase tracking-widest px-3 py-2 border-2 border-ink transition-all ${
               justAdded
                 ? 'bg-mustard text-ink animate-[wiggle_0.6s_ease-in-out]'
                 : 'bg-ink text-cream hover:bg-paprika'
             }`}
           >
-            {justAdded ? 'Added!' : 'Add +'}
+            {justAdded ? 'Added!' : hasMods ? 'Build it' : 'Add +'}
           </button>
         </div>
       )}

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useCart } from '../context/CartContext'
+import { useCustomizer } from '../context/CustomizerContext'
+import { MENU } from '../data/menu'
 
 export default function CartDrawer() {
   const { items, isOpen, close, updateQty, remove, subtotal, clear } = useCart()
+  const { open: openCustomizer } = useCustomizer()
   const [confirming, setConfirming] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
 
@@ -78,34 +81,81 @@ export default function CartDrawer() {
         ) : (
           <>
             <div className="flex-1 overflow-y-auto p-5 space-y-3">
-              {items.map((item) => (
-                <article key={item.id} className="bg-cream-deep border-2 border-ink p-3 flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="font-serif font-bold text-ink leading-tight">{item.name}</div>
-                    <div className="text-sm text-ink-soft mt-0.5">${item.price.toFixed(2)} each</div>
-                    <div className="mt-2 inline-flex items-center border-2 border-ink bg-cream">
-                      <button
-                        onClick={() => updateQty(item.id, item.qty - 1)}
-                        aria-label={`Decrease ${item.name}`}
-                        className="w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-mustard"
-                      >−</button>
-                      <span className="w-9 text-center font-bold tabular-nums">{item.qty}</span>
-                      <button
-                        onClick={() => updateQty(item.id, item.qty + 1)}
-                        aria-label={`Increase ${item.name}`}
-                        className="w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-mustard"
-                      >+</button>
+              {items.map((item) => {
+                const baseItem = MENU.find((m) => m.id === item.baseId)
+                const canEdit = !!baseItem?.modifiers?.length
+                return (
+                  <article key={item.id} className="bg-cream-deep border-2 border-ink p-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-serif font-bold text-ink leading-tight">{item.name}</div>
+                        <div className="text-sm text-ink-soft mt-0.5">${item.price.toFixed(2)} each</div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="font-bold text-ink tabular-nums">${(item.price * item.qty).toFixed(2)}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-bold text-ink tabular-nums">${(item.price * item.qty).toFixed(2)}</div>
-                    <button
-                      onClick={() => remove(item.id)}
-                      className="text-xs text-paprika hover:underline mt-2 uppercase tracking-wider font-semibold"
-                    >Remove</button>
-                  </div>
-                </article>
-              ))}
+
+                    {/* Modifier summary */}
+                    {item.modifiers && item.modifiers.length > 0 && (
+                      <ul className="mt-2 text-xs text-ink-soft space-y-0.5 font-serif">
+                        {item.modifiers.map((m) => (
+                          <li key={`${m.groupId}:${m.optionId}`} className="flex items-baseline gap-1.5">
+                            <span className="text-ink-soft/70 uppercase tracking-wider text-[10px] font-sans font-semibold">
+                              {m.groupLabel}:
+                            </span>
+                            <span>{m.optionLabel}</span>
+                            {m.priceChange !== 0 && (
+                              <span className="text-paprika tabular-nums ml-auto">
+                                {m.priceChange > 0 ? '+' : ''}${m.priceChange.toFixed(2)}
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {/* Footer row: qty stepper + edit/remove */}
+                    <div className="mt-3 pt-2 border-t border-dashed border-ink/25 flex items-center justify-between gap-2">
+                      <div className="inline-flex items-center border-2 border-ink bg-cream">
+                        <button
+                          onClick={() => updateQty(item.id, item.qty - 1)}
+                          aria-label={`Decrease ${item.name}`}
+                          className="w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-mustard"
+                        >−</button>
+                        <span className="w-9 text-center font-bold tabular-nums">{item.qty}</span>
+                        <button
+                          onClick={() => updateQty(item.id, item.qty + 1)}
+                          aria-label={`Increase ${item.name}`}
+                          className="w-8 h-8 flex items-center justify-center text-lg font-bold hover:bg-mustard"
+                        >+</button>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs uppercase tracking-wider font-semibold">
+                        {canEdit && baseItem && (
+                          <button
+                            onClick={() => {
+                              openCustomizer({
+                                item: baseItem,
+                                edit: {
+                                  editingCartRowId: item.id,
+                                  initialModifiers: item.modifiers ?? [],
+                                  initialQty: item.qty,
+                                },
+                              })
+                              close()
+                            }}
+                            className="text-teal-deep hover:text-ink hover:underline"
+                          >Edit</button>
+                        )}
+                        <button
+                          onClick={() => remove(item.id)}
+                          className="text-paprika hover:underline"
+                        >Remove</button>
+                      </div>
+                    </div>
+                  </article>
+                )
+              })}
             </div>
 
             <footer className="border-t-2 border-ink bg-cream-deep p-5 space-y-3">
