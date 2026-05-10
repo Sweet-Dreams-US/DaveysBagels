@@ -60,8 +60,11 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-cream/15 py-5 text-center text-cream/55 text-xs">
-        © {new Date().getFullYear()} Davey&rsquo;s Delicious Bagels. Crafted on Broadway.
+      <div className="border-t border-cream/15 py-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-cream/55 text-xs">
+        <span>© {new Date().getFullYear()} Davey&rsquo;s Delicious Bagels. Crafted on Broadway.</span>
+        <Link to="/admin" className="text-cream/55 hover:text-mustard underline-offset-4 hover:underline">
+          Admin Demo →
+        </Link>
       </div>
     </footer>
   )
